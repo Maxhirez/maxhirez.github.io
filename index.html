@@ -1,0 +1,86 @@
+<html>
+<head>
+	<style type="text/css">
+		body{
+			background-color: black;
+		}
+		.start{
+		    display: none;
+		    text-align: center;
+		    cursor: pointer;
+		    width:249px;
+		    height: 95px;
+		    margin-left: auto;
+		    margin-right: auto;
+		    background-image: url("playButton.png");
+		}
+		.top-text, .bottom-text, .the-child, .the-end{
+		    display: none;
+		    font-family: sans-serif;
+		    color:#08f;
+		    font-size: 2.5em;
+		}
+
+		.wrapper{
+			width: 1024px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+		.kid-wrapper{
+			display: block;
+			height:576px;
+		}
+		.the-child, .the-end{
+			width: 100%;
+		}
+		.bottom-text{
+			text-align: right;
+		}
+	</style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+	
+</head>
+<body>
+	<audio id="myAudio" >
+	  <source src="XmasFarAway.mp3" type="audio/mpeg">
+	</audio>
+	<audio id="myAudio2" >
+	  <source src="XmasFarAwayBell.mp3" type="audio/mpeg">
+	</audio>
+	<div class="wrapper">
+		<div class="start"></div>
+		<div class="top-text" id="top-text">
+			This year, remember that the true reason for the season...
+		</div>
+		<div class="kid-wrapper">
+			<img src='theKid.jpg' class='the-child' />
+			<img src='MerryXmas.jpg' class='the-end' />
+		</div>
+		<div class="bottom-text">
+			...is that this miraculous child was given to mankind.
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+	var aud = document.getElementById("myAudio");
+	var aud2 = document.getElementById("myAudio2");
+	aud.oncanplaythrough = function(){$(".start").show();}
+	$(".start").click(function(){
+		$(".start").remove();
+		myAudio.play();
+	    $(".top-text").fadeIn(4000, bottom());
+	});
+	function bottom(){
+		$(".bottom-text").delay(3000).fadeIn(4000, theKid());
+	}
+	function theKid(){
+		$(".the-child").delay(5000).fadeIn(4000);
+	}
+	aud.onended = function() {
+	  myAudio2.play();
+	  $(".top-text, .bottom-text, .the-child").hide();
+	  $(".the-end").show();
+	};
+</script>
+</html>
