@@ -361,7 +361,8 @@
 			dayCals+=enteredCals;
 			document.querySelectorAll(".modal-input").forEach((e)=>{e.style.display="none";});
 			document.querySelector("#total").innerHTML=dayCals;
-			document.querySelector("dialog").close();
+			document.querySelector("#modal-dialog").style.display = "none";
+			document.querySelector("#modal-backdrop").style.display = "none";
 			updateStored();
 			updateLine(enteredCals);
 		})
