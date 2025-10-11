@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="viewport" content="user-scalable=no, width=device-width" />
+	<link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+	<title>CalTrac</title>
+	<style type="text/css">
+        html{
+            font-family: sans-serif;
+            font-size:20px;
+        }
+		table{
+			border-collapse: collapse;
+			width: 100%;
+		}
+        button{font-size: 15.5px; }
+        td{
+            padding-bottom:3px;
+            padding-top:5px;
+        }
+		tbody tr{border-bottom: 1px solid #ddd;}
+        thead tr{
+            border-bottom: 2px solid #999;
+            font-size:24px;
+        }
+        button.smoothie, button.keto-bar, button.protein-chips{font-size:15px;}
+		#main td:nth-child(3), #main th:nth-child(3) {
+		  	text-align: right;
+		}
+		#log td:nth-child(2), #log th:nth-child(2) {
+		  	text-align: right;
+		}
+		h2{text-align: center;}
+        .app-name{width:140px;}
+        .date{width:190px;}
+		.modal-input{display: none;}
+        #container{
+            display:block;
+            margin:0 auto;
+            width: 370px;
+        }
+        #edit{float:right;}
+        #clear-dialog{
+        	width: 96%;
+        	border:2px solid red;
+        	display: none;
+
+        }
+
+
+	</style>
+
+</head>
+<body>
+	<div id="container">
+		<table id="main">
+			<thead>
+				<tr>
+					<th class="app-name">CalTrack</th>
+					<th class="date"><span id="the-day"></span></th>
+					<th><span id="total">0</span></th>
+				</tr>
+			</thead>
+			<tbody id="addBody">
+				<tr>
+					<td>Fiber bar</td>
+					<td>
+						<button class="one-off fiber-bar" value="70">70</button>
+						<button class="one-off fiber-bar" value="100">100</button>
+						<button class="one-off fiber-bar" value="130">130</button>
+					</td>
+					<td><span class="lineOut" id="fiber-bar-today">0</span></td>
+				</tr>
+                <tr>
+                    <td>Smoothie<br/><em>add-ins:</em></td>
+                    <td>
+                        <button class="one-off smoothie" value="100">100</button>
+                        <button class="one-off smoothie" value="140">140</button>
+                        <button class="one-off smoothie" value="160">160</button>
+                        <Br/>
+                        <button class="one-off smoothie" value="15">15</button>
+                        <button class="one-off smoothie" value="75">75</button>
+                    </td>
+                    <td><span class="lineOut" id="smoothie-today">0</span></td>
+                </tr>
+                <tr>
+                    <td>Yogurt</td>
+                    <td>
+                        <button class="one-off parfait" value="80">80</button>
+                        <button class="one-off parfait" value="200">200</button>
+                        <button class="one-off parfait" value="300">300</button>
+                    </td>
+                    <td><span class="lineOut" id="parfait-today">0</span></td>
+                </tr>
+                <tr>
+                    <td>Oatmeal</td>
+                    <td>
+                        <button class="one-off oatmeal" value="150">150</button>
+                        <button class="one-off oatmeal" value="300">300</button>
+                    </td>
+                    <td><span class="lineOut" id="oatmeal-today">0</span></td>
+                </tr>
+                <tr>
+                    <td>Probiotic drink</td>
+                    <td>
+                        <button class="one-off goodbelly" value="25">25</button>
+                        <button class="one-off goodbelly" value="50">50</button>
+                    </td>
+                    <td><span class="lineOut" id="goodbelly-today">0</span></td>
+                </tr>
+                <tr>
+                    <td>Fresh Veg</td>
+                    <td>
+                        <button class="one-off veg" value="15">15</button>
+                        <button class="one-off veg" value="30">30</button>
+                        <button class="one-off veg" value="35">35</button>
+                    </td>
+                    <td><span class="lineOut" id="veg-today">0</span></td>
+                </tr>
+            
+                
+                <tr>
+                    <td>Salmon</td>
+                    <td><button value="salmon" class="number-dialog">+</button></td>
+                    <td><span class="lineOut" id="salmon-today">0</span></td>
+                </tr>
+                <tr>
+                    <td>Chicken</td>
+                    <td><button value="chicken" class="number-dialog">+</button></td>
+                    <td><span class="lineOut" id="chicken-today">0</span></td>
+                </tr>
+                <tr>
+                    <td>Sweet potato(g)</td>
+                    <td><button value="yam" class="number-dialog">+</button></td>
+                    <td><span class="lineOut" id="yam-today">0</span></td>
+                </tr>
+				<tr>
+					<td>Protein bar</td>
+					<td>
+                        <button class="one-off keto-bar" value="180">180</button>
+                        <button class="one-off keto-bar" value="210">210</button>
+                        <button class="one-off keto-bar" value="250">250</button>
+                        <button class="one-off keto-bar" value="410">410</button>
+					</td>
+					<td><span class="lineOut" id="keto-bar-today">0</span></td>
+				</tr>
+				<tr>
+					<td>Protein snacks</td>
+					<td>
+						<button class="one-off protein-chips"  value="130">130</button>
+                        <button class="one-off protein-chips"  value="170">170</button>
+                        <button class="one-off protein-chips"  value="210">210</button>
+					</td>
+					<td><span class="lineOut" id="protein-chips-today">0</span></td>
+				</tr>
+				<!--<tr>
+					<td>Fennel Candy <span style="font-size:smaller">(tbsp)</span></td>
+					<td>
+						<button class="one-off fennel-candy" value="20">20</button>
+					</td>
+					<td><span class="lineOut" id="fennel-candy-today">0</span></td>
+				</tr>-->
+
+                <tr>
+                    <td>Crackers</td>
+                    <td>
+                        <button class="one-off crackers" value="130">130</button>
+                        <button class="one-off crackers" value="200">200</button>
+                    </td>
+                    <td><span class="lineOut" id="crackers-today">0</span></td>
+                </tr>
+   
+				<tr>
+					<td>Misc</td>
+					<td>
+                        <button class="one-off miscellaneous" value="5">5</button>
+                        <button class="one-off miscellaneous" value="10">10</button>
+                        <button class="one-off miscellaneous" value="20">20</button>
+                        <button class="one-off miscellaneous" value="50">50</button>
+                        <button class="one-off miscellaneous" value="100">100</button>
+						<button class="number-dialog miscellaneous" value="miscellaneous">+</button>
+						<td><span class="lineOut" id="miscellaneous-today">0</span></td>
+					</td>
+				</tr>
+			</tbody>
+	
+		</table>
+		<button id="reset-day">Reset day</button>
+		<button id="edit">Edit(-)</button>
+       
+        <!--<div id="reload-detected">
+            <button onclick="hideMe()">focus detected.</button>
+            <div id="date-detection">New date not detected.</div>
+		</div>-->
+		<div id="clear-dialog">
+			<p>ARE YOU SURE YOU WANT TO CLEAR OUT THE DAY AND START OVER?</p>
+			<button style="font-size: 24px;" id="execute-clear">Start over</button>
+			<button style="float:right; font-size: 24px;" id="cancel-clear">CANCEL</button>
+		</div>
+		<h2>Log</h2>
+		<table id="log">
+			<thead>
+				<tr>
+					<th>Date</th>
+					<th>Cals</th>
+				</tr>
+			</thead>
+			<tbody id="log-body">
+			</tbody>
+		</table>
+		<div style="text-align: center;">
+		<!--Janky-ass solution to new years shit. uncomment, upload, reset, recomment, reupload...
+        <button id="clear-log" onclick="resetStored()">Clear log</button>-->
+		</div>
+	</div>
+</body>
+<div id="modal-dialog" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border:2px solid #999; z-index:1000;">
+    <h2 id="modal-title"></h2>
+	<input class="modal-input" id="salmon-cals" type="number" value=".3" step=".01">
+	<input class="modal-input" id="yam-cals" type="number" value="100" step="1">
+    <input class="modal-input" id="chicken-cals" type="number" value="100" step="1">
+
+    <input class="modal-input" id="miscellaneous-cals" type="number">
+        <p>Calculated calories:</p>
+        <div id="calculated-calories"></div>
+        <button id="accept">Accept</button>
+        <button id="cancel">Cancel</button>
+            
+</div>
+<div id="modal-backdrop" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:999;"></div>
+
+	<script type="text/javascript">
+		let dayCals = 0;
+		let editing = false;
+		let lineID;//Output span of currently edited line
+		let dayLineItems=[]
+		let today = new Date();
+		let todayKey = returnTodayKey(today);
+        const formatter = new Intl.DateTimeFormat('en-CA');
+        
+        fillLog();
+		//check local storage for existing date
+        document.addEventListener("visibilitychange", checkOnLoad);
+        
+        function checkOnLoad(){
+           //document.querySelector("#reload-detected").style.display="block";
+
+			fillLog();
+            if(formatter.format(new Date())>formatter.format(today)){
+                //document.querySelector("#date-detection").innerHTML="New date detected."
+                today = new Date();
+                todayKey = returnTodayKey(today);
+                localStorage.removeItem("PreserveLinesCaltrac");
+                document.querySelectorAll(".lineOut").forEach((e)=>{e.innerHTML=0;});
+                document.querySelector("#total").innerHTML=0;
+                dayCals = 0;
+            }
+		}
+        
+        //add table items
+        function fillLog(entry){
+            document.querySelector("#log-body").innerHTML = "";
+            let logArr=[];//create empty array
+            console.log(todayKey)
+            Object.entries(localStorage).forEach((key)=>{//loop through local storage
+                if (key.includes(todayKey)) {
+
+                    //if todayKey is found set dayCalls and fill top table cals
+                    dayCals=parseInt(key[1]);
+                    populateLines();
+                }
+                if(key.toString().includes("CalTrac_")){//if CalTrac is in key push to logarr
+                    logArr.push(key);
+                }
+            })
+            document.querySelector("#total").innerHTML=dayCals;
+            logArr.sort(sortFunction);
+            //keep log down to 14 days
+            while(logArr.length>14){
+                let removeEntry = logArr.shift();
+                localStorage.removeItem(removeEntry[0]);
+            }
+            //loop over and add to table
+            logArr.forEach((e)=>{
+                let r=document.createElement("TR");
+                let lc=document.createElement("TD");
+                lc.innerHTML=e[0].toString().slice(8);
+                let rc=document.createElement("TD");
+                rc.innerHTML=e[1];
+                r.append(lc);
+                r.append(rc);
+                document.querySelector("#log-body").append(r);
+            });
+        }
+        
+        //function hideMe(){
+        //    document.querySelector("#reload-detected").style.display="none";
+        //    document.querySelector("#date-detection").innerHTML = "New date not detected."
+        //}
+		function returnTodayKey(today) {
+			let correctedMonth=today.getMonth()+1;
+			let formattedMonth=correctedMonth<10?("0").concat("",correctedMonth.toString()):correctedMonth.toString();
+			let formattedDay=today.getDate<10?("0").concat("",today.getDate().toString()):today.getDate().toString();
+			let todayFormatted = formattedMonth+"/"+today.getDate()+"/"+today.getFullYear();
+			//put date in header row
+			document.querySelector("#the-day").innerHTML=todayFormatted;
+			return "CalTrac_"+todayFormatted;
+		}
+
+
+		//add known one-offs listener
+		document.querySelectorAll(".one-off").forEach((e)=>{
+			e.addEventListener("click", function(){oneOff(e)})
+		});
+
+		//add variable + button listener
+		document.querySelectorAll(".number-dialog").forEach((e)=>{
+			e.addEventListener("click", function(){enterVals(e.value)})
+		});
+        
+        //clear the day out and start over
+        document.querySelector("#reset-day").addEventListener('click', function(){
+        	document.querySelector("#clear-dialog").style.display="block";
+        });
+
+        //execute-clear
+        document.querySelector("#execute-clear").addEventListener('click', function(){
+        	resetDay();
+        	document.querySelector("#clear-dialog").style.display="none";
+        });
+
+        //cancel-clear
+        document.querySelector("#cancel-clear").addEventListener('click', function(){
+        	document.querySelector("#clear-dialog").style.display="none";
+        });
+
+		//flip editing flag
+		document.querySelector("#edit").addEventListener('click',function(){
+			editing=!editing;
+			document.querySelector("html").style.backgroundColor=editing?"#f77":"white";
+			document.querySelector("#modal-dialog").style.backgroundColor=editing?"#f88":"white";
+		})
+
+        //modal cancel button listener
+        document.querySelector("#cancel").addEventListener('click',function(){
+            document.querySelector("#modal-dialog").style.display = "none";
+            document.querySelector("#modal-backdrop").style.display = "none";
+        })
+        
+        document.querySelector("#modal-backdrop").addEventListener('click', function(){
+            document.querySelector("#modal-dialog").style.display = "none";
+            document.querySelector("#modal-backdrop").style.display = "none";
+        });
+        
+		//add input value and close modal
+		document.querySelector("#accept").addEventListener('click',function(){
+			let enteredCals=parseInt(document.querySelector("#calculated-calories").innerHTML);
+			dayCals+=enteredCals;
+			document.querySelectorAll(".modal-input").forEach((e)=>{e.style.display="none";});
+			document.querySelector("#total").innerHTML=dayCals;
+			document.querySelector("dialog").close();
+			updateStored();
+			updateLine(enteredCals);
+		})
+        
+        function resetStored(){
+		    for(let i = localStorage.length - 1; i >= 0; i--) {
+		        const key = localStorage.key(i);
+		        if(key.includes("CalTrac_")){ 
+		            console.log(key);
+		            localStorage.removeItem(key);
+		        }
+		    }
+        }
+
+        //clear out all day's values and start over
+        function resetDay(){
+            localStorage.removeItem(todayKey);
+            localStorage.removeItem("PreserveLinesCaltrac");
+            document.querySelectorAll(".lineOut").forEach((e)=>{e.innerHTML=0;});
+            document.querySelector("#total").innerHTML=0;
+            dayCals = 0;
+        }
+        
+		//add update dialog calories listener
+		document.querySelectorAll(".modal-input").forEach((e)=>{
+			e.addEventListener("change", function(){
+				let editFactor = editing?-1:1;
+				if (e.id=="salmon-cals"){
+					document.querySelector("#calculated-calories").innerHTML=parseInt(e.value*528*editFactor);
+				}else if (e.id=="yam-cals"){
+					document.querySelector("#calculated-calories").innerHTML=parseInt(e.value*.86*editFactor);
+                }else if (e.id=="chicken-cals"){
+                    document.querySelector("#calculated-calories").innerHTML=parseInt(e.value*715*editFactor);
+				}else{
+					document.querySelector("#calculated-calories").innerHTML=e.value*editFactor;
+				}
+			})
+		});
+
+		//updates oneOff button calculations
+		function oneOff(e){
+			let amount = e.value;
+			lineID = "#"+e.classList[1]+"-today";
+			amount=editing?parseInt(amount)*-1:parseInt(amount);
+			dayCals+=amount;
+			document.querySelector("#total").innerHTML=dayCals;
+			updateStored();
+			updateLine(amount);
+		}
+
+		//sets dialog title, shows dialog and appropriate input, adds or subtracts values based on entry.
+		function enterVals(type){
+			lineID = "#"+type+"-today";
+			document.querySelector("#modal-title").innerHTML=type.charAt(0).toUpperCase()+type.slice(1);
+			document.getElementById(type+"-cals").style.display="block";
+			document.querySelector("#calculated-calories").innerHTML="0";
+            document.querySelector("#modal-dialog").style.display = "block";
+            document.querySelector("#modal-backdrop").style.display = "block";
+		}
+
+		//save it all
+		function updateStored(){
+			let runningCals=document.querySelector("#total").innerHTML;
+			localStorage.setItem(todayKey, runningCals);
+		}
+
+		//updates line value
+		function updateLine(amount){
+			let currentVal = parseInt(document.querySelector(lineID).innerHTML);
+			document.querySelector(lineID).innerHTML = currentVal+amount;
+			preserveLines();
+		}
+
+		//save line values
+		function preserveLines(){
+			console.log("Lines saved.")
+			let lineArr =[];
+			document.querySelectorAll(".lineOut").forEach((e)=>{
+				let k=e.id;
+				let v=e.innerHTML;
+				console.log(k,v)
+				lineArr.push([k,v]);
+			});
+			localStorage.setItem("PreserveLinesCaltrac",JSON.stringify(lineArr));
+		}
+
+		//populate line values
+		function populateLines(){
+			let lineArr = JSON.parse(localStorage.getItem("PreserveLinesCaltrac"));
+			if(lineArr){
+				lineArr.forEach((e)=>{
+					document.getElementById(e[0]).innerHTML = e[1];
+				})
+			}
+		}
+
+		//2d sort
+		function sortFunction(a, b) {
+		    if (a[0] === b[0]) {
+		        return 0;
+		    }
+		    else {
+		        return (a[0] < b[0]) ? -1 : 1;
+		    }
+		}
+        //in lieu of console
+        window.onerror = function(msg, url, line) {
+            alert('Error: ' + msg + '\nLine: ' + line);
+            return false;
+        };
+	</script>
+</html>
