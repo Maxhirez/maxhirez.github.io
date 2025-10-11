@@ -221,7 +221,7 @@
     <h2 id="modal-title"></h2>
 	<input class="modal-input" id="salmon-cals" type="number" value=".3" step=".01">
 	<input class="modal-input" id="yam-cals" type="number" value="100" step="1">
-    <input class="modal-input" id="chicken-cals" type="number" value="100" step="1">
+    <input class="modal-input" id="chicken-cals" type="number" value=".5" step="1">
 
     <input class="modal-input" id="miscellaneous-cals" type="number">
         <p>Calculated calories:</p>
@@ -417,6 +417,10 @@
 		function enterVals(type){
 			lineID = "#"+type+"-today";
 			document.querySelector("#modal-title").innerHTML=type.charAt(0).toUpperCase()+type.slice(1);
+
+			// Hide all inputs first
+    		document.querySelectorAll(".modal-input").forEach((e)=>{e.style.display="none";});
+    
 			document.getElementById(type+"-cals").style.display="block";
 			document.querySelector("#calculated-calories").innerHTML="0";
             document.querySelector("#modal-dialog").style.display = "block";
