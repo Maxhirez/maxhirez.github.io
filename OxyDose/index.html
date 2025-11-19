@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Dose Timer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #667eea;
+        }
+
+        .hamburger {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .hamburger span {
+            width: 100%;
+            height: 3px;
+            background: #667eea;
+            border-radius: 2px;
+        }
+
+        .dose-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .dose-select {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            background: white;
+            color: #333;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .dose-select:disabled {
+            background: #e0e0e0;
+            color: #999;
+            cursor: not-allowed;
+            border-color: #ccc;
+        }
+
+        .timer-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .timer {
+            margin-bottom: 15px;
+        }
+
+        .timer:last-child {
+            margin-bottom: 0;
+        }
+
+        .timer-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .timer-value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .timer-value.active {
+            color: #dc3545;
+        }
+
+        .timer-value.safe {
+            color: #28a745;
+        }
+
+        .timer-label.active {
+            color: #dc3545;
+        }
+
+        .timer-label.safe {
+            color: #28a745;
+        }
+
+        .remaining-section {
+            background: #fff3cd;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .remaining-label {
+            font-size: 14px;
+            color: #856404;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .remaining-value {
+            font-size: 32px;
+            color: #856404;
+            font-weight: bold;
+        }
+
+        .menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 300px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            padding: 60px 20px 20px;
+        }
+
+        .menu.active {
+            right: 0;
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .menu-overlay.active {
+            display: block;
+        }
+
+        .menu-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .menu-item:hover {
+            background: #f8f9fa;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .record-table {
+            width: 100%;
+        }
+
+        .date-header {
+            background: #667eea;
+            color: white;
+            padding: 10px;
+            font-weight: bold;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+
+        .record-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .record-time {
+            color: #666;
+        }
+
+        .record-dose {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .refill-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .refill-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .refill-btn:active {
+            background: #5568d3;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #999;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Dose Timer</h1>
+            <div class="hamburger" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+        <div class="dose-section">
+            <select class="dose-select" id="doseSelect" onchange="recordDose()">
+                <option value="">Select Dose (mg)</option>
+                <option value="2.5">2.5 mg</option>
+                <option value="5">5 mg</option>
+                <option value="10">10 mg</option>
+            </select>
+        </div>
+
+        <div class="timer-section">
+            <div class="timer">
+                <div class="timer-label safe" id="nextDoseLabel">Next dose: Safe.</div>
+                <div class="timer-value safe" id="nextDoseTimer">00:00:00</div>
+            </div>
+            <div class="timer" id="activityTimerContainer">
+                <div class="timer-label safe" id="activityLabel">Activities. safe</div>
+                <div class="timer-value safe" id="activityTimer">00:00:00</div>
+            </div>
+        </div>
+
+        <div class="remaining-section">
+            <div class="remaining-label">Remaining mg</div>
+            <div class="remaining-value" id="remainingMg">182.5</div>
+        </div>
+    </div>
+
+    <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+    <div class="menu" id="menu">
+        <div class="menu-item" onclick="showRecords()">Show Record</div>
+        <div class="menu-item" onclick="undoLastEntry()">Undo Last Entry</div>
+        <div class="menu-item" onclick="showRefill()">Refill</div>
+    </div>
+
+    <div class="modal" id="recordModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Dose Records</div>
+                <div class="close-btn" onclick="closeModal('recordModal')">&times;</div>
+            </div>
+            <div id="recordContent"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="refillModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Add Refill</div>
+                <div class="close-btn" onclick="closeModal('refillModal')">&times;</div>
+            </div>
+            <input type="number" class="refill-input" id="refillAmount" placeholder="Enter mg amount" step="0.1">
+            <button class="refill-btn" onclick="addRefill()">Add Refill</button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize app
+        function initApp() {
+            if (!localStorage.getItem('doseRecords')) {
+                localStorage.setItem('doseRecords', JSON.stringify([]));
+            }
+            if (!localStorage.getItem('remainingMg')) {
+                localStorage.setItem('remainingMg', '182.5');
+            }
+            
+            updateRemainingDisplay();
+            checkTimers();
+            setInterval(checkTimers, 1000);
+        }
+
+        function recordDose() {
+            const select = document.getElementById('doseSelect');
+            const dose = parseFloat(select.value);
+            
+            if (!dose) return;
+            
+            const now = new Date();
+            const record = {
+                date: now.toISOString().split('T')[0],
+                time: now.toTimeString().split(' ')[0].substring(0, 5),
+                timestamp: now.getTime(),
+                dose: dose
+            };
+            
+            // Save record
+            const records = JSON.parse(localStorage.getItem('doseRecords'));
+            records.push(record);
+            localStorage.setItem('doseRecords', JSON.stringify(records));
+            
+            // Update remaining mg
+            const remaining = parseFloat(localStorage.getItem('remainingMg'));
+            const newRemaining = remaining - dose;
+            localStorage.setItem('remainingMg', newRemaining.toString());
+            updateRemainingDisplay();
+            
+            // Calculate times based on dose chart
+            let activityHours, nextDoseHours;
+            if (dose === 2.5) {
+                activityHours = 1;
+                nextDoseHours = 2;
+            } else if (dose === 5) {
+                activityHours = 2;
+                nextDoseHours = 4;
+            } else if (dose === 10) {
+                activityHours = 4;
+                nextDoseHours = 8;
+            }
+            
+            const activitySafeTime = now.getTime() + (activityHours * 60 * 60 * 1000);
+            const enableTime = now.getTime() + (nextDoseHours * 60 * 60 * 1000);
+            
+            localStorage.setItem('enableTime', enableTime.toString());
+            localStorage.setItem('activitySafeTime', activitySafeTime.toString());
+            
+            // Reset select and disable
+            select.value = '';
+            select.disabled = true;
+            
+            checkTimers();
+        }
+
+        function checkTimers() {
+            const now = Date.now();
+            const enableTime = parseInt(localStorage.getItem('enableTime') || '0');
+            const activitySafeTime = parseInt(localStorage.getItem('activitySafeTime') || '0');
+            const select = document.getElementById('doseSelect');
+            
+            const nextDoseLabel = document.getElementById('nextDoseLabel');
+            const nextDoseTimer = document.getElementById('nextDoseTimer');
+            const activityLabel = document.getElementById('activityLabel');
+            const activityTimer = document.getElementById('activityTimer');
+            
+            // Only check timers if they have been set (value > 0)
+            // Check next dose timer
+            if (enableTime > 0 && enableTime > now) {
+                const remaining = enableTime - now;
+                nextDoseLabel.textContent = 'Next dose in:';
+                nextDoseLabel.className = 'timer-label active';
+                nextDoseTimer.textContent = formatTime(remaining);
+                nextDoseTimer.className = 'timer-value active';
+                select.disabled = true;
+            } else if (enableTime > 0 && enableTime <= now) {
+                nextDoseLabel.textContent = 'Next dose: Safe.';
+                nextDoseLabel.className = 'timer-label safe';
+                nextDoseTimer.textContent = '00:00:00';
+                nextDoseTimer.className = 'timer-value safe';
+                select.disabled = false;
+                localStorage.removeItem('enableTime');
+            } else {
+                // No timer set yet - keep initial safe state
+                nextDoseLabel.textContent = 'Next dose: Safe.';
+                nextDoseLabel.className = 'timer-label safe';
+                nextDoseTimer.textContent = '00:00:00';
+                nextDoseTimer.className = 'timer-value safe';
+                select.disabled = false;
+            }
+            
+            // Check activity timer
+            if (activitySafeTime > 0 && activitySafeTime > now) {
+                const remaining = activitySafeTime - now;
+                activityLabel.textContent = 'Activities safe in:';
+                activityLabel.className = 'timer-label active';
+                activityTimer.textContent = formatTime(remaining);
+                activityTimer.className = 'timer-value active';
+            } else if (activitySafeTime > 0 && activitySafeTime <= now) {
+                activityLabel.textContent = 'Activities. safe';
+                activityLabel.className = 'timer-label safe';
+                activityTimer.textContent = '00:00:00';
+                activityTimer.className = 'timer-value safe';
+                localStorage.removeItem('activitySafeTime');
+            } else {
+                // No timer set yet - keep initial safe state
+                activityLabel.textContent = 'Activities. safe';
+                activityLabel.className = 'timer-label safe';
+                activityTimer.textContent = '00:00:00';
+                activityTimer.className = 'timer-value safe';
+            }
+        }
+
+        function formatTime(ms) {
+            const hours = Math.floor(ms / (1000 * 60 * 60));
+            const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((ms % (1000 * 60)) / 1000);
+            
+            return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateRemainingDisplay() {
+            const remaining = parseFloat(localStorage.getItem('remainingMg'));
+            document.getElementById('remainingMg').textContent = remaining.toFixed(2);
+        }
+
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            const overlay = document.getElementById('menuOverlay');
+            menu.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function showRecords() {
+            toggleMenu();
+            const records = JSON.parse(localStorage.getItem('doseRecords'));
+            const content = document.getElementById('recordContent');
+            
+            if (records.length === 0) {
+                content.innerHTML = '<div class="empty-message">No records yet</div>';
+            } else {
+                // Group by date
+                const grouped = {};
+                records.forEach(record => {
+                    if (!grouped[record.date]) {
+                        grouped[record.date] = [];
+                    }
+                    grouped[record.date].push(record);
+                });
+                
+                // Sort dates descending
+                const dates = Object.keys(grouped).sort().reverse();
+                
+                let html = '<div class="record-table">';
+                dates.forEach(date => {
+                    html += `<div class="date-header">${formatDate(date)}</div>`;
+                    grouped[date].forEach(record => {
+                        html += `
+                            <div class="record-row">
+                                <span class="record-time">${record.time}</span>
+                                <span class="record-dose">${record.dose} mg</span>
+                            </div>
+                        `;
+                    });
+                });
+                html += '</div>';
+                
+                content.innerHTML = html;
+            }
+            
+            document.getElementById('recordModal').classList.add('active');
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr + 'T00:00:00');
+            return date.toLocaleDateString('en-US', { 
+                weekday: 'short', 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+
+        function undoLastEntry() {
+            toggleMenu();
+            const records = JSON.parse(localStorage.getItem('doseRecords'));
+            
+            if (records.length === 0) {
+                alert('No entries to undo');
+                return;
+            }
+            
+            const lastEntry = records.pop();
+            localStorage.setItem('doseRecords', JSON.stringify(records));
+            
+            // Add dose back to remaining
+            const remaining = parseFloat(localStorage.getItem('remainingMg'));
+            const newRemaining = remaining + lastEntry.dose;
+            localStorage.setItem('remainingMg', newRemaining.toString());
+            updateRemainingDisplay();
+            
+            // Clear timers
+            localStorage.removeItem('enableTime');
+            localStorage.removeItem('activitySafeTime');
+            
+            // Enable button and reset display to safe state
+            const select = document.getElementById('doseSelect');
+            const nextDoseLabel = document.getElementById('nextDoseLabel');
+            const nextDoseTimer = document.getElementById('nextDoseTimer');
+            const activityLabel = document.getElementById('activityLabel');
+            const activityTimer = document.getElementById('activityTimer');
+            
+            select.disabled = false;
+            
+            nextDoseLabel.textContent = 'Next dose: Safe.';
+            nextDoseLabel.className = 'timer-label safe';
+            nextDoseTimer.textContent = '00:00:00';
+            nextDoseTimer.className = 'timer-value safe';
+            
+            activityLabel.textContent = 'Activities. safe';
+            activityLabel.className = 'timer-label safe';
+            activityTimer.textContent = '00:00:00';
+            activityTimer.className = 'timer-value safe';
+        }
+
+        function showRefill() {
+            toggleMenu();
+            document.getElementById('refillAmount').value = '';
+            document.getElementById('refillModal').classList.add('active');
+        }
+
+        function addRefill() {
+            const amount = parseFloat(document.getElementById('refillAmount').value);
+            
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+            
+            const remaining = parseFloat(localStorage.getItem('remainingMg'));
+            const newRemaining = remaining + amount;
+            localStorage.setItem('remainingMg', newRemaining.toString());
+            updateRemainingDisplay();
+            
+            closeModal('refillModal');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Initialize on load
+        initApp();
+    </script>
+</body>
+</html>
