@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>OxyDose
-    </title>
+    <title>Dose Timer</title>
     <style>
         * {
             margin: 0;
@@ -395,8 +394,14 @@
             if (!dose) return;
             
             const now = new Date();
+            // Use local date instead of UTC
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const localDate = `${year}-${month}-${day}`;
+            
             const record = {
-                date: now.toISOString().split('T')[0],
+                date: localDate,
                 time: now.toTimeString().split(' ')[0].substring(0, 5),
                 timestamp: now.getTime(),
                 dose: dose
