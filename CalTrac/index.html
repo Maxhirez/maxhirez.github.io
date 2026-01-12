@@ -215,6 +215,7 @@
 		<!--Janky-ass solution to new years shit. uncomment, upload, reset, recomment, reupload...
         <button id="clear-log" onclick="resetStored()">Clear log</button>-->
 		</div>
+		<button onclick="deleteAllLastYearEntries()">Delete last year</button>
 	</div>
 </body>
 <div id="modal-dialog" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border:2px solid #999; z-index:1000;">
@@ -304,7 +305,7 @@
 			let correctedMonth=today.getMonth()+1;
 			let formattedMonth=correctedMonth<10?("0").concat("",correctedMonth.toString()):correctedMonth.toString();
 			let formattedDay=today.getDate<10?("0").concat("",today.getDate().toString()):today.getDate().toString();
-			let todayFormatted = formattedMonth+"/"+today.getDate()+"/"+today.getFullYear();
+			let todayFormatted = today.getFullYear()+"/"+formattedMonth+"/"+today.getDate();
 			//put date in header row
 			document.querySelector("#the-day").innerHTML=todayFormatted;
 			return "CalTrac_"+todayFormatted;
@@ -477,5 +478,20 @@
             alert('Error: ' + msg + '\nLine: ' + line);
             return false;
         };
+
+		function deleteAllLastYearEntries(){
+		    let currentYear = new Date().getFullYear();
+		    for(let i = localStorage.length - 1; i >= 0; i--) {
+		        const key = localStorage.key(i);
+		        if(key.includes("CalTrac_")){ 
+		            let entryYear = parseInt(key.slice(8,12));
+		            if(entryYear<currentYear){
+		                console.log("Deleting entry from "+entryYear+": "+key);
+		                localStorage.removeItem(key);
+		            }
+		        }
+		    }
+			window.location.reload();
+		}
 	</script>
 </html>
