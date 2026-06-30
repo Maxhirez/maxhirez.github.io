@@ -112,7 +112,7 @@
                     <td><span class="lineOut" id="goodbelly-today">0</span></td>
                 </tr>
                 <tr>
-                    <td>Fresh Veg</td>
+                    <td>Fruit/Veg</td>
                     <td>
                         <button class="one-off veg" value="15">15</button>
                         <button class="one-off veg" value="30">30</button>
@@ -129,7 +129,11 @@
                 </tr>
                 <tr>
                     <td>Chicken</td>
-                    <td><button value="chicken" class="number-dialog">+</button></td>
+                    <td><button class="one-off chicken" value="115">L</button>
+                    <button class="one-off chicken" value="180">T</button>
+                    <button class="one-off chicken" value="90">W</button>
+                    <button class="one-off chicken" value="225">B</button>
+                    <button value="chicken" class="number-dialog">+</button></td>
                     <td><span class="lineOut" id="chicken-today">0</span></td>
                 </tr>
                 <tr>
@@ -213,9 +217,9 @@
 		</table>
 		<div style="text-align: center;">
 		<!--Janky-ass solution to new years shit. uncomment, upload, reset, recomment, reupload...
-        <button id="clear-log" onclick="resetStored()">Clear log</button>
+        <button id="clear-log" onclick="resetStored()">Clear log</button>-->
 		</div>
-		<button onclick="deleteAllLastYearEntries()">Delete last year</button>-->
+		<button onclick="deleteAllLastYearEntries()">Delete last year</button>
 	</div>
 </body>
 <div id="modal-dialog" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border:2px solid #999; z-index:1000;">
